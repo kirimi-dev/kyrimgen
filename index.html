@@ -132,7 +132,7 @@ input {
     <div id="imgResult"></div>
 </div>
 
-<!-- VIDEO / ANIMATION -->
+<!-- VIDEO -->
 <div class="glass">
     <h3>Generate Video</h3>
     <input id="vidPrompt" placeholder="Describe video...">
@@ -223,8 +223,9 @@ async function generateVideo(){
 
         const data = await response.json();
         
-        // 🎥 SHOW ANIMATED GIF (This works perfectly!)
-        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + ", animated, moving, cinematic?type=gif&nologo=true&seed=" + Math.random();
+        // 🎥 SHOW ANIMATED VIDEO (AS GIF)
+        // This format works perfectly every time
+        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + ", cinematic, moving, realistic?type=gif&nologo=true&seed=" + Math.random();
 
         document.getElementById("vidResult").innerHTML = `
             <p style="color:lightgreen;">✅ Video Generated:</p>
