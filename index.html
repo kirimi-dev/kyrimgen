@@ -153,6 +153,9 @@ input {
 
 <script>
 
+// 👇 YOUR BACKEND URL
+const backendUrl = "https://kyrimgen.onrender.com/api/ask";
+
 /* LOGIN */
 function openLogin(){
     document.getElementById("loginModal").style.display="flex";
@@ -162,7 +165,7 @@ function closeLogin(){
 }
 
 /* IMAGE */
-function generateImage(){
+async function generateImage(){
     let prompt = document.getElementById("imgPrompt").value;
 
     if(!prompt){
@@ -170,23 +173,30 @@ function generateImage(){
         return;
     }
 
-    document.getElementById("imgResult").innerHTML = "⏳ Generating image...";
+    document.getElementById("imgResult").innerHTML = "⏳ Connecting to Brain...";
 
-    setTimeout(()=>{
-        let img = "https://via.placeholder.com/300x300.png?text=" + encodeURIComponent(prompt);
+    try {
+        const response = await fetch(backendUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: prompt })
+        });
 
+        const data = await response.json();
         document.getElementById("imgResult").innerHTML = `
-            <img src="${img}">
-            <br>
-            <a href="${img}" download>
-                <button class="btn">Download</button>
-            </a>
+            <p style="color:lightgreen;">✅ Reply from Backend:</p>
+            <p>${data.reply}</p>
         `;
-    },2000);
+    } catch (error) {
+        document.getElementById("imgResult").innerHTML = `
+            <p style="color:red;">❌ Error connecting to backend</p>
+            <p>${error}</p>
+        `;
+    }
 }
 
 /* VIDEO */
-function generateVideo(){
+async function generateVideo(){
     let prompt = document.getElementById("vidPrompt").value;
 
     if(!prompt){
@@ -194,21 +204,26 @@ function generateVideo(){
         return;
     }
 
-    document.getElementById("vidResult").innerHTML = "⏳ Generating video...";
+    document.getElementById("vidResult").innerHTML = "⏳ Connecting to Brain...";
 
-    setTimeout(()=>{
-        let video = "https://www.w3schools.com/html/mov_bbb.mp4";
+    try {
+        const response = await fetch(backendUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: prompt })
+        });
 
+        const data = await response.json();
         document.getElementById("vidResult").innerHTML = `
-            <video controls>
-                <source src="${video}" type="video/mp4">
-            </video>
-            <br>
-            <a href="${video}" download>
-                <button class="btn">Download</button>
-            </a>
+            <p style="color:lightgreen;">✅ Reply from Backend:</p>
+            <p>${data.reply}</p>
         `;
-    },2000);
+    } catch (error) {
+        document.getElementById("vidResult").innerHTML = `
+            <p style="color:red;">❌ Error connecting to backend</p>
+            <p>${error}</p>
+        `;
+    }
 }
 
 /* PARTICLES */
