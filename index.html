@@ -173,7 +173,7 @@ async function generateImage(){
         return;
     }
 
-    document.getElementById("imgResult").innerHTML = "⏳ Connecting to Brain...";
+    document.getElementById("imgResult").innerHTML = "⏳ Generating image...";
 
     try {
         const response = await fetch(backendUrl, {
@@ -183,9 +183,17 @@ async function generateImage(){
         });
 
         const data = await response.json();
+        
+        // 🖼️ SHOW IMAGE INSTEAD OF TEXT
+        let imageUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt);
+
         document.getElementById("imgResult").innerHTML = `
-            <p style="color:lightgreen;">✅ Reply from Backend:</p>
-            <p>${data.reply}</p>
+            <p style="color:lightgreen;">✅ Image Generated:</p>
+            <img src="${imageUrl}" alt="${prompt}">
+            <br>
+            <a href="${imageUrl}" download>
+                <button class="btn">Download Image</button>
+            </a>
         `;
     } catch (error) {
         document.getElementById("imgResult").innerHTML = `
