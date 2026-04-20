@@ -1,27 +1,294 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
-const port = process.env.PORT || 3000;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyrim AI Studio</title>
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-// Test route
-app.get('/', (req, res) => {
-  res.send('Backend is running! 🧠✅');
+body {
+    background: linear-gradient(135deg, #0B1F3A, #000);
+    color: #fff;
+    overflow-x: hidden;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 25px;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.05);
+}
+
+nav h1 {
+    color: #1E90FF;
+}
+
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.glass {
+    background: rgba(255,255,255,0.08);
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 20px rgba(30,144,255,0.2);
+}
+
+.btn {
+    background: #1E90FF;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    box-shadow: 0 0 10px #1E90FF;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 6px;
+    border: none;
+}
+
+.modal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    width: 300px;
+}
+
+#imgResult img, #vidResult img {
+    margin-top: 10px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 0 15px rgba(30,144,255,0.5);
+    transition: 0.3s;
+}
+
+#imgResult img:hover, #vidResult img:hover {
+    transform: scale(1.05);
+}
+
+@media(max-width:600px){
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav>
+    <h1>Kyrim AI</h1>
+    <button class="btn" onclick="openLogin()">Login</button>
+</nav>
+
+<section class="hero">
+    <h2>Create Anything with AI</h2>
+    <p>Images • Videos • Smart Results</p>
+</section>
+
+<!-- IMAGE -->
+<div class="glass">
+    <h3>Generate Image</h3>
+    <input id="imgPrompt" placeholder="Enter prompt...">
+    <button class="btn" onclick="generateImage()">Generate</button>
+    <div id="imgResult"></div>
+</div>
+
+<!-- VIDEO -->
+<div class="glass">
+    <h3>Generate Video</h3>
+    <input id="vidPrompt" placeholder="Describe video...">
+    <button class="btn" onclick="generateVideo()">Generate</button>
+    <div id="vidResult"></div>
+</div>
+
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+    <div class="glass modal-content">
+        <h3>Login</h3>
+        <input placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button class="btn">Login</button>
+        <button class="btn" onclick="closeLogin()">Close</button>
+    </div>
+</div>
+
+<script>
+
+// 👇 YOUR BACKEND URL
+const backendUrl = "https://kyrimgen.onrender.com/api/ask";
+
+/* LOGIN */
+function openLogin(){
+    document.getElementById("loginModal").style.display="flex";
+}
+function closeLogin(){
+    document.getElementById("loginModal").style.display="none";
+}
+
+/* IMAGE */
+async function generateImage(){
+    let prompt = document.getElementById("imgPrompt").value;
+
+    if(!prompt){
+        alert("Enter a prompt first");
+        return;
+    }
+
+    document.getElementById("imgResult").innerHTML = "⏳ Generating image...";
+
+    try {
+        const response = await fetch(backendUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: prompt })
+        });
+
+        const data = await response.json();
+        
+        // 🖼️ SHOW IMAGE
+        let imageUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt);
+
+        document.getElementById("imgResult").innerHTML = `
+            <p style="color:lightgreen;">✅ Image Generated:</p>
+            <img src="${imageUrl}" alt="${prompt}">
+            <br>
+            <a href="${imageUrl}" download>
+                <button class="btn">Download Image</button>
+            </a>
+        `;
+    } catch (error) {
+        document.getElementById("imgResult").innerHTML = `
+            <p style="color:red;">❌ Error connecting to backend</p>
+            <p>${error}</p>
+        `;
+    }
+}
+
+/* VIDEO */
+async function generateVideo(){
+    let prompt = document.getElementById("vidPrompt").value;
+
+    if(!prompt){
+        alert("Enter a prompt first");
+        return;
+    }
+
+    document.getElementById("vidResult").innerHTML = "⏳ Generating video...";
+
+    try {
+        const response = await fetch(backendUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: prompt })
+        });
+
+        const data = await response.json();
+        
+        // 🎥 SHOW ANIMATED VIDEO (AS GIF)
+        // This format works perfectly every time
+        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + ", cinematic, moving, realistic?type=gif&nologo=true&seed=" + Math.random();
+
+        document.getElementById("vidResult").innerHTML = `
+            <p style="color:lightgreen;">✅ Video Generated:</p>
+            <img src="${videoUrl}" alt="${prompt}">
+            <br>
+            <a href="${videoUrl}" download>
+                <button class="btn">Download Video</button>
+            </a>
+        `;
+    } catch (error) {
+        document.getElementById("vidResult").innerHTML = `
+            <p style="color:red;">❌ Error connecting to backend</p>
+            <p>${error}</p>
+        `;
+    }
+}
+
+/* PARTICLES */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for(let i=0;i<80;i++){
+    particles.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*2,
+        dx: Math.random()-0.5,
+        dy: Math.random()-0.5
+    });
+}
+
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#1E90FF";
+
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if(p.x<0 || p.x>canvas.width) p.dx *= -1;
+        if(p.y<0 || p.y>canvas.height) p.dy *= -1;
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 });
 
-// AI Answer route
-app.post('/api/ask', (req, res) => {
-  const question = req.body.question;
-  
-  // This sends the answer back
-  const answer = "This is the answer from backend: " + question;
-  
-  res.json({ reply: answer });
-});
+</script>
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+</body>
+</html>
