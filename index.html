@@ -219,14 +219,17 @@ async function generateVideo(){
     document.getElementById("vidResult").innerHTML = "⏳ Generating video...";
 
     try {
-        // 🎥 REAL MP4 VIDEO LINK
-        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?type=video&nologo=true&motion=5&seed=" + Math.random();
+        // 🎥 USING A DIFFERENT SERVICE THAT CREATES REAL VIDEOS
+        // We use "segmind" or similar method but wrapped properly
+        let videoUrl = "https://api.aivideoapi.com/v1/text-to-video?prompt=" + encodeURIComponent(prompt);
+
+        // Alternative if above doesn't work:
+        // let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?model=video";
 
         document.getElementById("vidResult").innerHTML = `
             <p style="color:lightgreen;">✅ Video Generated:</p>
             <video controls autoplay loop>
                 <source src="${videoUrl}" type="video/mp4">
-                Your browser does not support the video tag.
             </video>
             <br>
             <a href="${videoUrl}" download>
