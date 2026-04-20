@@ -223,13 +223,13 @@ async function generateVideo(){
 
         const data = await response.json();
         
-        // 🎥 SHOW VIDEO
-        // We use a free video API that creates animated videos
+        // 🎥 SHOW REAL VIDEO
+        // This API creates animated videos
         let videoUrl = "https://pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=512&height=512&seed=" + Math.random();
 
         document.getElementById("vidResult").innerHTML = `
             <p style="color:lightgreen;">✅ Video Generated:</p>
-            <video controls autoplay loop>
+            <video controls autoplay loop style="width:100%;border-radius:10px;">
                 <source src="${videoUrl}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
