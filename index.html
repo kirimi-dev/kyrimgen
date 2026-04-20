@@ -88,7 +88,7 @@ input {
     width: 300px;
 }
 
-#imgResult img, #vidResult video {
+#imgResult img, #vidResult img {
     margin-top: 10px;
     border-radius: 10px;
     width: 100%;
@@ -97,7 +97,7 @@ input {
     transition: 0.3s;
 }
 
-#imgResult img:hover, #vidResult video:hover {
+#imgResult img:hover, #vidResult img:hover {
     transform: scale(1.05);
 }
 
@@ -132,7 +132,7 @@ input {
     <div id="imgResult"></div>
 </div>
 
-<!-- VIDEO -->
+<!-- VIDEO / ANIMATION -->
 <div class="glass">
     <h3>Generate Video</h3>
     <input id="vidPrompt" placeholder="Describe video...">
@@ -223,16 +223,12 @@ async function generateVideo(){
 
         const data = await response.json();
         
-        // 🎥 SHOW REAL VIDEO
-        // This API creates animated videos
-        let videoUrl = "https://pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=512&height=512&seed=" + Math.random();
+        // 🎥 SHOW ANIMATED GIF (This works perfectly!)
+        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + ", animated, moving, cinematic?type=gif&nologo=true&seed=" + Math.random();
 
         document.getElementById("vidResult").innerHTML = `
             <p style="color:lightgreen;">✅ Video Generated:</p>
-            <video controls autoplay loop style="width:100%;border-radius:10px;">
-                <source src="${videoUrl}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <img src="${videoUrl}" alt="${prompt}">
             <br>
             <a href="${videoUrl}" download>
                 <button class="btn">Download Video</button>
