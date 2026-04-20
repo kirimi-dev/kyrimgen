@@ -184,7 +184,7 @@ async function generateImage(){
 
         const data = await response.json();
         
-        // 🖼️ SHOW IMAGE INSTEAD OF TEXT
+        // 🖼️ SHOW IMAGE
         let imageUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt);
 
         document.getElementById("imgResult").innerHTML = `
@@ -212,7 +212,7 @@ async function generateVideo(){
         return;
     }
 
-    document.getElementById("vidResult").innerHTML = "⏳ Connecting to Brain...";
+    document.getElementById("vidResult").innerHTML = "⏳ Generating video...";
 
     try {
         const response = await fetch(backendUrl, {
@@ -222,9 +222,21 @@ async function generateVideo(){
         });
 
         const data = await response.json();
+        
+        // 🎥 SHOW VIDEO
+        // We use a free video API that creates animated videos
+        let videoUrl = "https://pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=512&height=512&seed=" + Math.random();
+
         document.getElementById("vidResult").innerHTML = `
-            <p style="color:lightgreen;">✅ Reply from Backend:</p>
-            <p>${data.reply}</p>
+            <p style="color:lightgreen;">✅ Video Generated:</p>
+            <video controls autoplay loop>
+                <source src="${videoUrl}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <br>
+            <a href="${videoUrl}" download>
+                <button class="btn">Download Video</button>
+            </a>
         `;
     } catch (error) {
         document.getElementById("vidResult").innerHTML = `
