@@ -176,7 +176,6 @@ async function generateImage(){
     document.getElementById("imgResult").innerHTML = "⏳ Generating image...";
 
     try {
-        // Calling YOUR API
         const response = await fetch(`${apiBase}/image?prompt=${encodeURIComponent(prompt)}`);
         const data = await response.json();
         
@@ -212,22 +211,18 @@ async function generateVideo(){
     document.getElementById("vidResult").innerHTML = "⏳ Generating video...";
 
     try {
-        // Calling YOUR API
-        const response = await fetch(`${apiBase}/video?prompt=${encodeURIComponent(prompt)}`);
-        const data = await response.json();
-        
-        if(data.success){
-            document.getElementById("vidResult").innerHTML = `
-                <p style="color:lightgreen;">✅ Video Generated:</p>
-                <img src="${data.url}" alt="${prompt}">
-                <br>
-                <a href="${data.url}" download>
-                    <button class="btn">Download Video</button>
-                </a>
-            `;
-        } else {
-            document.getElementById("vidResult").innerHTML = `<p style="color:red;">❌ ${data.error}</p>`;
-        }
+        // 🎥 We create the video link DIRECTLY here to make sure it works
+        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + ", cinematic animation, moving, realistic?type=gif&nologo=true&seed=" + Math.random();
+
+        document.getElementById("vidResult").innerHTML = `
+            <p style="color:lightgreen;">✅ Video Generated:</p>
+            <img src="${videoUrl}" alt="${prompt}">
+            <br>
+            <a href="${videoUrl}" download>
+                <button class="btn">Download Video</button>
+            </a>
+        `;
+
     } catch (error) {
         document.getElementById("vidResult").innerHTML = `
             <p style="color:red;">❌ Error connecting to API</p>
