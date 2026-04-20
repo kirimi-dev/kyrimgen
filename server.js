@@ -7,17 +7,16 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Simple test route
+// Test route
 app.get('/', (req, res) => {
   res.send('Backend is running! 🧠✅');
 });
 
-// Your AI API route
+// AI Answer route
 app.post('/api/ask', (req, res) => {
   const question = req.body.question;
   
-  // For now, we just send it back
-  // Later we will connect it to OpenAI or your AI model
+  // This sends the answer back
   const answer = "This is the answer from backend: " + question;
   
   res.json({ reply: answer });
