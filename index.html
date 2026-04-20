@@ -88,7 +88,7 @@ input {
     width: 300px;
 }
 
-#imgResult img, #vidResult img {
+#imgResult img {
     margin-top: 10px;
     border-radius: 10px;
     width: 100%;
@@ -97,8 +97,16 @@ input {
     transition: 0.3s;
 }
 
-#imgResult img:hover, #vidResult img:hover {
+#imgResult img:hover {
     transform: scale(1.05);
+}
+
+#vidResult video {
+    margin-top: 10px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 0 15px rgba(30,144,255,0.5);
 }
 
 @media(max-width:600px){
@@ -211,12 +219,15 @@ async function generateVideo(){
     document.getElementById("vidResult").innerHTML = "⏳ Generating video...";
 
     try {
-        // 🎥 We create the video link DIRECTLY here to make sure it works
-        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + ", cinematic animation, moving, realistic?type=gif&nologo=true&seed=" + Math.random();
+        // 🎥 REAL MP4 VIDEO LINK
+        let videoUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?type=video&nologo=true&motion=5&seed=" + Math.random();
 
         document.getElementById("vidResult").innerHTML = `
             <p style="color:lightgreen;">✅ Video Generated:</p>
-            <img src="${videoUrl}" alt="${prompt}">
+            <video controls autoplay loop>
+                <source src="${videoUrl}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
             <br>
             <a href="${videoUrl}" download>
                 <button class="btn">Download Video</button>
