@@ -1,1 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyrim AI Studio</title>
 
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0B1F3A, #000);
+    color: #fff;
+    overflow-x: hidden;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 25px;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.05);
+}
+
+nav h1 {
+    color: #1E90FF;
+}
+
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.glass {
+    background: rgba(255,255,255,0.08);
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 20px rgba(30,144,255,0.2);
+}
+
+.btn {
+    background: #1E90FF;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    box-shadow: 0 0 10px #1E90FF;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 6px;
+    border: none;
+}
+
+.modal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    width: 300px;
+}
+
+#imgResult img, #vidResult video {
+    margin-top: 10px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 0 15px rgba(30,144,255,0.5);
+    transition: 0.3s;
+}
+
+#imgResult img:hover, #vidResult video:hover {
+    transform: scale(1.05);
+}
+
+@media(max-width:600px){
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav>
+    <h1>Kyrim AI</h1>
+    <button class="btn" onclick="openLogin()">Login</button>
+</nav>
+
+<section class="hero">
+    <h2>Create Anything with AI</h2>
+    <p>Images • Videos • Smart Results</p>
+</section>
+
+<!-- IMAGE -->
+<div class="glass">
+    <h3>Generate Image</h3>
+    <input id="imgPrompt" placeholder="Enter prompt...">
+    <button class="btn" onclick="generateImage()">Generate</button>
+    <div id="imgResult"></div>
+</div>
+
+<!-- VIDEO -->
+<div class="glass">
+    <h3>Generate Video</h3>
+    <input id="vidPrompt" placeholder="Describe video...">
+    <button class="btn" onclick="generateVideo()">Generate</button>
+    <div id="vidResult"></div>
+</div>
+
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+    <div class="glass modal-content">
+        <h3>Login</h3>
+        <input placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button class="btn">Login</button>
+        <button class="btn" onclick="closeLogin()">Close</button>
+    </div>
+</div>
+
+<script>
+
+/* LOGIN */
+function openLogin(){
+    document.getElementById("loginModal").style.display="flex";
+}
+function closeLogin(){
+    document.getElementById("loginModal").style.display="none";
+}
+
+/* IMAGE */
+function generateImage(){
+    let prompt = document.getElementById("imgPrompt").value;
+
+    if(!prompt){
+        alert("Enter a prompt first");
+        return;
+    }
+
+    document.getElementById("imgResult").innerHTML = "⏳ Generating image...";
+
+    setTimeout(()=>{
+        let img = "https://via.placeholder.com/300x300.png?text=" + encodeURIComponent(prompt);
+
+        document.getElementById("imgResult").innerHTML = `
+            <img src="${img}">
+            <br>
+            <a href="${img}" download>
+                <button class="btn">Download</button>
+            </a>
+        `;
+    },2000);
+}
+
+/* VIDEO */
+function generateVideo(){
+    let prompt = document.getElementById("vidPrompt").value;
+
+    if(!prompt){
+        alert("Enter a prompt first");
+        return;
+    }
+
+    document.getElementById("vidResult").innerHTML = "⏳ Generating video...";
+
+    setTimeout(()=>{
+        let video = "https://www.w3schools.com/html/mov_bbb.mp4";
+
+        document.getElementById("vidResult").innerHTML = `
+            <video controls>
+                <source src="${video}" type="video/mp4">
+            </video>
+            <br>
+            <a href="${video}" download>
+                <button class="btn">Download</button>
+            </a>
+        `;
+    },2000);
+}
+
+/* PARTICLES */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for(let i=0;i<80;i++){
+    particles.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*2,
+        dx: Math.random()-0.5,
+        dy: Math.random()-0.5
+    });
+}
+
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#1E90FF";
+
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if(p.x<0 || p.x>canvas.width) p.dx *= -1;
+        if(p.y<0 || p.y>canvas.height) p.dy *= -1;
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+</script>
+
+</body>
+</html>
